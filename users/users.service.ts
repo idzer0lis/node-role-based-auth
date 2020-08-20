@@ -1,15 +1,8 @@
 ﻿const config = require('../config.json');
 const jwt = require('jsonwebtoken');
-import {User, Role, UserRO} from "../_helpers/interfaces";
+import {User, UserRO} from "../_helpers/interfaces";
+import {users, groups} from "../data/data.source";
 
-import { groups } from "../groups/groups.service";
-
-// users hardcoded for simplicity, store in a db for production applications
-const users: User[] = [
-    { id: 1, username: 'manager', password: 'manager', name: 'Manager', role: 'manager', groups: [groups[0]] },
-    { id: 2, username: 'user', password: 'user', name: 'User', role: 'regular', groups: [groups[1]] },
-    { id: 3, username: 'global-manager', password: 'global-manager', name: 'Global Manager', role: 'globalManager', groups: [groups[0]]}
-];
 
 export async function authenticate({ username, password }: any): Promise<any> {
     const user = users.find(u => u.username === username && u.password === password);

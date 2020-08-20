@@ -1,20 +1,7 @@
 const config = require('../config.json');
 const jwt = require('jsonwebtoken');
-import {User, Role, Group, Collection, Item} from "../_helpers/interfaces";
-
-//hardcoded for simplicity
-
-const item1: Item = {id: 1, name: 'item1'};
-const item2: Item = {id: 2, name: 'item2'};
-const item3: Item = {id: 3, name: 'item3'};
-
-const collection1: Collection = {id: 1, name: 'Manager`s access collection', items: [item1]};
-const collection2: Collection = {id: 2, name: 'Backoffice', items: [item2, item3]};
-
-export const groups: Group[] = [
-    { id: 1, name: 'managers', collections: [collection1]},
-    { id: 2, name: 'regulars', collections: [collection2] },
-];
+import {Group, Collection} from "../_helpers/interfaces";
+import { groups } from "../data/data.source";
 
 export async function getAllGroups(): Promise<Group[]> {
     return groups;

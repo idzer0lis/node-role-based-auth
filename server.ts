@@ -4,13 +4,12 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const errorHandler = require('./_helpers/error-handler');
-//import {errorHandler} from "./_helpers/error-handler";
-//import errorHandler = require('./_helpers/error-handler');
 
 import { userRoutes } from "./users/users.controller";
 import { groupRoutes } from "./groups/groups.controller";
 import {collectionRoutes} from "./collections/collections.controller";
+
+import {errorHandlerMiddleware} from "./_helpers/middlewares";
 
 
 const serverless = require('serverless-http');
@@ -24,13 +23,8 @@ app.use('/users',  userRoutes);
 app.use('/groups', groupRoutes);
 app.use('/collections', collectionRoutes);
 
-//global error handler
-//app.use(errorHandler);
-
-// //Observe the '/test'
-// app.get('/test', async function (req, res) {
-//     return res.send('Hello World!')
-// })
+// global error handler
+app.use(errorHandlerMiddleware);
 
 // start server
 const port = process.env.NODE_ENV === 'production' ? 80 : 4000;
@@ -38,6 +32,6 @@ const server = app.listen(port, function () {
     console.log('Server listening on port ' + port);
 });
 
-//module.exports.handler = serverless(app);
+module.exports.handler = serverless(app);
 
-module.exports = app;
+//module.exports = app;

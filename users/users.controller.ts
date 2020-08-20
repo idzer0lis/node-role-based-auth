@@ -5,7 +5,7 @@ const express = require('express');
 const router: Router = Router();
 const userService = require('./users.service');
 
-import {authorizeMiddleware} from "../_helpers/authorize";
+import {authorizeMiddleware} from "../_helpers/middlewares";
 
 import {isManager, isGlobalManager, isMyGroup} from "../_helpers/utils";
 

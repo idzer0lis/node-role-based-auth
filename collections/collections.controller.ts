@@ -5,7 +5,7 @@ const express = require('express');
 const router: Router = Router();
 const collectionService = require('../collections/collections.service');
 
-import {authorizeMiddleware, isMyCollectionMiddleware} from "../_helpers/authorize";
+import {authorizeMiddleware, isMyCollectionMiddleware} from "../_helpers/middlewares";
 import {getGroupById} from "../groups/groups.service";
 
 

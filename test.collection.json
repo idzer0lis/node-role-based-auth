@@ -1,0 +1,294 @@
+{
+  "info": {
+    "name": "Api tests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var responseJSON = JSON.parse(responseBody);",
+                  "",
+                  "var user = responseJSON.user || {};",
+                  "",
+                  "tests['User has \"id\" property'] = user.hasOwnProperty('id');",
+                  "tests['User has \"name\" property'] = user.hasOwnProperty('name');",
+                  "tests['User has \"username\" property'] = user.hasOwnProperty('username');",
+                  "tests['User has \"role\" property'] = user.hasOwnProperty('role');",
+                  "tests['User has \"groups\" property'] = user.hasOwnProperty('groups');",
+                  "tests['User has \"token\" property'] = user.hasOwnProperty('token');",
+                  "",
+                  "if(tests['User has \"token\" property']){",
+                  "    pm.globals.set('token', user.token);",
+                  "}",
+                  "",
+                  "tests['Global variable \"token\" has been set'] = pm.globals.get('token') === user.token;",
+                  ""
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\":\"{{EMAIL}}\", \"password\":\"{{PASSWORD}}\"}"
+            },
+            "url": {
+              "raw": "{{APIURL}}/users/authenticate",
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "users",
+                "authenticate"
+              ]
+            }
+          },
+          "response": [
+
+          ]
+        },
+        {
+          "name": "Get all users",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var responseJSON = JSON.parse(responseBody);",
+                  "",
+                  "var user = responseJSON[0] || {};",
+                  "",
+                  "tests['User has \"id\" property'] = user.hasOwnProperty('id');",
+                  "tests['User has \"name\" property'] = user.hasOwnProperty('name');",
+                  "tests['User has \"username\" property'] = user.hasOwnProperty('username');",
+                  "tests['User has \"role\" property'] = user.hasOwnProperty('role');",
+                  "tests['User has \"groups\" property'] = user.hasOwnProperty('groups');",
+                  ""
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{APIURL}}/users",
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": [
+
+          ]
+        },
+        {
+          "name": "Get user by id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var responseJSON = JSON.parse(responseBody);",
+                  "",
+                  "var user = responseJSON || {};",
+                  "",
+                  "tests['User has \"id\" property'] = user.hasOwnProperty('id');",
+                  "tests['User has \"name\" property'] = user.hasOwnProperty('name');",
+                  "tests['User has \"username\" property'] = user.hasOwnProperty('username');",
+                  "tests['User has \"role\" property'] = user.hasOwnProperty('role');",
+                  "tests['User has \"groups\" property'] = user.hasOwnProperty('groups');",
+                  ""
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{APIURL}}/users/{{slug}}",
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "users",
+                "{{slug}}"
+              ]
+            }
+          },
+          "response": [
+
+          ]
+        },
+        {
+          "name": "Create User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var responseJSON = JSON.parse(responseBody);",
+                  "",
+                  "tests['Response contains \"user\" property'] = responseJSON.hasOwnProperty('user');",
+                  "",
+                  "var user = responseJSON.user || {};",
+                  "",
+                  "tests['User has \"email\" property'] = user.hasOwnProperty('email');",
+                  "tests['User has \"username\" property'] = user.hasOwnProperty('username');",
+                  "tests['User has \"bio\" property'] = user.hasOwnProperty('bio');",
+                  "tests['User has \"image\" property'] = user.hasOwnProperty('image');",
+                  "tests['User has \"token\" property'] = user.hasOwnProperty('token');",
+                  ""
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"user\":{\"name\":\"Pretty name\", \"username\":\"user2\", \"password\":\"secret\"}, \"groupId\": 2}"
+            },
+            "url": {
+              "raw": "{{APIURL}}/users",
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": [
+
+          ]
+        },
+        {
+          "name": "Delete User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var responseJSON = JSON.parse(responseBody);",
+                  "",
+                  "var user = responseJSON || {};",
+                  "",
+                  "tests['User has \"message\" property'] = user.hasOwnProperty('message');",
+                  "tests['Deletion confirmation'] = user.message = 'User Deleted';",
+                  ""
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Requested-With",
+                "value": "XMLHttpRequest"
+              },
+              {
+                "key": "Authorization",
+                "value": "Token {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{APIURL}}/users/{{slug}}",
+              "host": [
+                "{{APIURL}}"
+              ],
+              "path": [
+                "users",
+                "{{slug}}"
+              ]
+            }
+          },
+          "response": [
+
+          ]
+        }
+      ]
+    }
+  ]
+}

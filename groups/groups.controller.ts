@@ -1,14 +1,9 @@
-﻿import {User, Role, Group, Collection, Item, UserRO} from "../_helpers/interfaces";
+﻿import {Group} from "../_helpers/interfaces";
 import {NextFunction, Request, Response, Router} from "express";
-
 const express = require('express');
 const router: Router = Router();
 const groupService = require('./groups.service');
-
-import {authorizeMiddleware, isMyGroupMiddleware, isGroupManagerMiddleware} from "../_helpers/authorize";
-
-import {isGlobalManager} from "../_helpers/utils";
-
+import {authorizeMiddleware, isMyGroupMiddleware, isGroupManagerMiddleware} from "../_helpers/middlewares";
 
 // routes
 router.get('/', authorizeMiddleware(['globalManager']), getAllGroups);

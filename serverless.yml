@@ -12,7 +12,7 @@ provider:
 
 functions:
   app:
-    handler: handler.handler  #assuming your handler file is handler.js
+    handler: handler.handler
     events:
       - http: ANY /
       - http: 'ANY {proxy+}'

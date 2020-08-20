@@ -26,7 +26,7 @@ export const authorizeMiddleware = function(roles: Role[] = []) {
                 return res.status(401).json({ message: 'Unauthorized' });
             }
 
-            req.user = await getUserById(req.user.id); // store all user data
+            req.user = await getUserById(req.user.id); // store most user data
 
             next();
         }
@@ -62,7 +62,7 @@ export const isGroupManagerMiddleware = function () {
             }
 
             if(!isManager(req.user)) {
-                return res.status(401).json({ message: 'Unauthorized cuz no manager' })
+                return res.status(401).json({ message: 'Unauthorized cuz you re no manager' })
             }
 
             const _groupId = req.params.id;
@@ -102,5 +102,20 @@ export const isMyCollectionMiddleware = function () {
             return next();
         }
     ]
+}
+
+export const errorHandlerMiddleware =  function (err: any, req: any, res: any, next: any) {
+    if (typeof (err) === 'string') {
+        // custom application error
+        return res.status(400).json({ message: err });
+    }
+
+    if (err.name === 'UnauthorizedError') {
+        // jwt authentication error
+        return res.status(401).json({ message: 'Invalid Token' });
+    }
+
+    // default to 500 server error
+    return res.status(500).json({ message: err.message });
 }
 

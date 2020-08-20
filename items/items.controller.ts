@@ -5,7 +5,7 @@ const express = require('express');
 const router: Router = Router();
 const itemService = require('../items/items.service');
 
-import {authorizeMiddleware} from "../_helpers/authorize";
+import {authorizeMiddleware} from "../_helpers/middlewares";
 
 import {isGlobalManager} from "../_helpers/utils";
 import {getCollectionById} from "../collections/collections.service";
@@ -17,7 +17,9 @@ router.get('/:id', authorizeMiddleware(), getItemById);
 router.post('/', authorizeMiddleware(), createItem);
 router.put('/:id', authorizeMiddleware(), updateItem);
 router.delete('/:id', authorizeMiddleware(), deleteItem);
-export const collectionRoutes: Router = router;
+export const itemRoutes: Router = router;
+
+// todo, refactor using the middlewares made
 
 function getAllItems(req: any, res: Response, next: NextFunction) {
     const currentUser = req.user;
