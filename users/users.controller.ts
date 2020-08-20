@@ -3,9 +3,9 @@ import {NextFunction, Request, Response, Router} from "express";
 
 const express = require('express');
 const router: Router = Router();
-const userService = require('./user.service');
+const userService = require('./users.service');
 
-import {authorize} from "../_helpers/authorize";
+import {authorizeMiddleware} from "../_helpers/authorize";
 
 import {isManager, isGlobalManager, isMyGroup} from "../_helpers/utils";
 
@@ -13,11 +13,11 @@ import { getGroupById} from "../groups/groups.service";
 
 // routes
 router.post('/authenticate', authenticate);     // public route
-router.get('/', authorize(['globalManager']), getAllUsers); // global only
-router.get('/:id', authorize(), getUserById);       // all authenticated users
-router.post('/', authorize(), createUser);
-router.put('/:id', authorize(), updateUser);
-router.delete('/:id', authorize(), deleteUser);
+router.get('/', authorizeMiddleware(['globalManager']), getAllUsers);
+router.get('/:id', authorizeMiddleware(), getUserById);       // all authenticated users
+router.post('/', authorizeMiddleware(['globalManager']), createUser);
+router.put('/:id', authorizeMiddleware(), updateUser);
+router.delete('/:id', authorizeMiddleware(['globalManager', 'manager']), deleteUser);
 export const userRoutes: Router = router;
 
 function authenticate(req: Request, res: Response, next: NextFunction) {
@@ -43,9 +43,7 @@ function getUserById(req: any, res: Response, next: NextFunction) {
 
     // only global admin and own user can access
     if(isGlobalManager(currentUser) || id === currentUser.id) {
-        userService.getUserById(req.params.id)
-            .then((user: User) => user ? res.json(user) : res.sendStatus(404))
-            .catch((err: Error) => next(err));
+
     } else {
         return res.status(401).json({ message: 'Unauthorized' });
     }
@@ -72,7 +70,7 @@ async function createUser(req: any, res: Response, next: NextFunction) {
             const _group = await getGroupById(req.body.groupId)
 
 
-            if (!isMyGroup(currentUser, _group)) {
+            if (!isMyGroup(currentUser, _group.id)) {
                 return res.status(401).json({ message: 'No access to this group' });
             } else {
                 newUser.groups = [_group];
@@ -115,7 +113,5 @@ function deleteUser(req: any, res: Response, next: NextFunction) {
     } else {
         return res.status(401).json({ message: 'Unauthorized' });
     }
-
-
 }
 

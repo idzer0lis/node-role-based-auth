@@ -9,23 +9,20 @@ export const isGlobalManager =  function (user: User): boolean {
 }
 
 export const userHasGroups = function (user: User): boolean {
-    return !!user.groups;
-
-
+    return !!user.groups
 }
 
-export const isMyGroup = function (user: User, group: Group): boolean {
-    console.log('user has groups', user, userHasGroups(user));
+export const isMyGroup = function (user: User, groupId: number): boolean {
     if (!userHasGroups(user)) return false;
-    return user.groups.some( (g: Group) => g.id === group.id);
+    return user.groups.some( (g: Group) => g.id == groupId);
 }
 
-export const isMyCollection = function (user: User, collection: Collection): boolean {
+export const isMyCollection = function (user: User, collectionId: number): boolean {
     if (!userHasGroups(user)) return false;
     let isMine = false;
     user.groups.map( (g: Group) => {
         if (g.collections && g.collections.length) {
-            isMine = g.collections.some( (c: Collection) => c.id === collection.id);
+            isMine = g.collections.some( (c: Collection) => c.id == collectionId);
         }
     });
     return isMine;

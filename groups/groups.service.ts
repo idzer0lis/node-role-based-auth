@@ -26,8 +26,24 @@ export async function getGroupById(id: string): Promise<Group> {
     return group;
 }
 
+// only one collection per group
+export async function getGroupByCollectionId(id: string): Promise<Group> {
+    let group = undefined as Group;
+    groups.map( (g: Group) => {
+       if (g.collections && g.collections.length) {
+           if(g.collections.find( (c: Collection) => c.id == parseInt(id))) {
+               group = g;
+           }
+       }
+    });
+
+    return group;
+}
+
 export async function createGroup(group: Group): Promise<Group> {
-    this.groups.push(group);
+    const lastGroupIndex = groups[groups.length -1].id;
+    group.id = lastGroupIndex + 1;
+    groups.push(group);
     return group;
 }
 
