@@ -5,7 +5,7 @@ import {authorizeMiddleware, isGroupManagerMiddleware, isMyGroupMiddleware} from
 const groupService = require('./groups.service');
 
 export class GroupsController implements Controller {
-    public path = 'groups';
+    public path = '/groups';
     public router: Router = Router();
     private groupsService: Service;
 
