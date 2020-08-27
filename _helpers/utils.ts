@@ -1,4 +1,7 @@
-import {Collection, Group, Item, Role, User} from "./interfaces";
+import {Collection, Group, Item, User} from "./interfaces";
+import {
+    cleanEnv, port, str,
+} from 'envalid';
 
 export const isManager =  function (user: User): boolean {
     return user.role === 'manager';
@@ -40,4 +43,11 @@ export const isMyItem = function (user: User, item: Item): boolean {
         }
     });
     return isMine;
+}
+
+export const  validateEnv = function () {
+    cleanEnv(process.env, {
+        JWT_SECRET: str(),
+        PORT: port(),
+    });
 }

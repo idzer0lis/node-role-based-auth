@@ -1,8 +1,9 @@
-// export enum Role  {
-//     'globalManager',
-//     'regular',
-//     'manager'
-// }
+import { Router } from 'express';
+
+export interface Controller {
+    path: string;
+    router: Router;
+}
 
 export type Role =  "globalManager" | "manager" | "regular";
 
@@ -22,6 +23,10 @@ export interface UserRO  {
     name: string;
     role: Role;
     groups: Group[] | null;
+}
+
+export interface UserLoginRO extends UserRO {
+    token: any;
 }
 
 export interface Group {

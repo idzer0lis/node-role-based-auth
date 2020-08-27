@@ -1,77 +1,67 @@
-import {User, Role, Group, Collection, Item} from "../_helpers/interfaces";
+import {Group, Collection, Item} from "../_helpers/interfaces";
+import {Service} from "../users/users.service";
+import {groups} from "../data/data.source";
 
-const getCollectionById = require('../collections/collections.service');
+export class ItemsService implements Service {
 
-//hardcoded for simplicity
+    collectionService: Service;
+    groups: Group[];
 
-const item1: Item = {id: 1, name: 'item1'};
-const item2: Item = {id: 2, name: 'item2'};
-const item3: Item = {id: 3, name: 'item3'};
+    constructor(CollectionService: Service) {
+        this.collectionService = CollectionService;
+        this.groups = groups;
 
-const collection1: Collection = {id: 1, name: 'Manager`s access collection', items: [item1]};
-const collection2: Collection = {id: 2, name: 'Backoffice', items: [item2, item3]};
+    }
 
-const groups: Group[] = [
-    { id: 1, name: 'managers', collections: [collection1]},
-    { id: 2, name: 'regulars', collections: [collection2] },
-];
 
-module.exports = {
-    getAllItems,
-    getCollectionById,
-    createItem,
-    updateItem,
-    deleteItem
-};
+    getAll(): Promise<Item[]> {
+        let allItems = [] as Item[];
+        this.groups.map( (g: Group) => {
+            if (g.collections && g.collections.length) {
+                g.collections.map( (c: Collection) => {
+                    if (c.items && c.items.length) allItems.concat(c.items);
+                });
+            }
+        });
+        return Promise.resolve(allItems);
+    }
 
-async function getAllItems(): Promise<Item[]> {
-    let allItems = [] as Item[];
-    groups.map( (g: Group) => {
-        if (g.collections && g.collections.length) {
-            g.collections.map( (c: Collection) => {
-                if (c.items && c.items.length) allItems.concat(c.items);
-            });
-        }
-    });
-    return allItems;
-}
+    async getById(id: string): Promise<Item> {
+        const items: Item[] = await this.getAll();
+        const _item = items.find((i: Item) => i.id === parseInt(id));
+        if (!_item) return;
+        return Promise.resolve(_item);
+    }
 
-async function getItemId(id: string): Promise<Item> {
-    const items: Item[] = await getAllItems();
-    const _item = items.find((i: Item) => i.id === parseInt(id));
-    if (!_item) return;
-    return _item;
-}
+    async create (item: Item, collectionId: number): Promise<Item> {
+        const _collection = await this.collectionService.getById(collectionId.toString());
+        if (!_collection) return;
+        _collection.items.push(item);
+        //const _group = groups[groups.findIndex( el => el.id === _group.id)] = _group;
+        return Promise.resolve(item);
+    }
 
-// TODO
+    //todo
+    update(item: Item, groupId: number): Promise<Item> {
+        return Promise.resolve(item);
+    }
 
-async function createItem(item: Item, collectionId: number): Promise<Item> {
-    const _collection = getCollectionById(collectionId);
-    if (!_collection) return;
-    _collection.items.push(item);
-    //const _group = groups[groups.findIndex( el => el.id === _group.id)] = _group;
-    return item;
-}
+    delete(id: string): Promise<boolean> {
+        let deleted = false;
+        groups.map( (g: Group) => {
+            if (g.collections && g.collections.length) {
+                g.collections.map ( (c: Collection) => {
+                    if (c.items && c.items.length) {
+                        let index = c.items.findIndex((i: Item) => i.id === parseInt(id));
+                        if(index >0 || index==0) {
+                            c.items.splice(index, 1);
+                            deleted = true;
+                        }
+                    }
+                })
+            }
+        });
+        return Promise.resolve(deleted);
 
-async function updateItem(item: Item, groupId: number): Promise<Item> {
-    return item;
-}
-
-async function deleteItem(id: number): Promise<boolean> {
-    let deleted = false;
-    groups.map( (g: Group) => {
-        if (g.collections && g.collections.length) {
-           g.collections.map ( (c: Collection) => {
-               if (c.items && c.items.length) {
-                   let index = c.items.findIndex((i: Item) => i.id === id);
-                   if(index >0 || index==0) {
-                       c.items.splice(index, 1);
-                       deleted = true;
-                   }
-               }
-           })
-        }
-    });
-    return deleted;
-
+    }
 }

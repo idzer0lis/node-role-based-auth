@@ -1,11 +1,11 @@
 import {NextFunction, Response} from "express";
 import {Role, Group} from "./interfaces";
-import {getUserById} from "../users/users.service";
+import {IUserService, UsersService} from "../users/users.service";
 import {isGlobalManager, isManager, isMyCollection, isMyGroup, userHasGroups} from "./utils";
-import {getGroupByCollectionId} from "../groups/groups.service";
+import {GroupsService, IGroupService} from "../groups/groups.service";
 
 const jwt = require('express-jwt');
-const { secret } = require('config.json');
+import {secret} from "../config";
 
 export const authorizeMiddleware = function(roles: Role[] = []) {
     // roles param can be a single role string (e.g. Manager or 'Manager')
@@ -15,7 +15,7 @@ export const authorizeMiddleware = function(roles: Role[] = []) {
     }
     return [
         // authenticate JWT token and attach user to request object (req.user)
-        jwt({ secret, algorithms: ['HS256'] }),
+        jwt({ secret: secret, algorithms: ['HS256'] }),
 
         // authorize based on user role
         async (req: any, res: Response, next: NextFunction) => {
@@ -26,7 +26,9 @@ export const authorizeMiddleware = function(roles: Role[] = []) {
                 return res.status(401).json({ message: 'Unauthorized' });
             }
 
-            req.user = await getUserById(req.user.id); // store most user data
+            const usersService: IUserService = new UsersService();
+
+            req.user = await usersService.getById(req.user.id); // store all user data
 
             next();
         }
@@ -62,7 +64,7 @@ export const isGroupManagerMiddleware = function () {
             }
 
             if(!isManager(req.user)) {
-                return res.status(401).json({ message: 'Unauthorized cuz you re no manager' })
+                return res.status(401).json({ message: 'Unauthorized cuz no manager' })
             }
 
             const _groupId = req.params.id;
@@ -88,7 +90,8 @@ export const isMyCollectionMiddleware = function () {
             // check to see if the collection sits in the group of the manager
             let canManageCollection = false;
             if (isManager(req.user)) {
-                const _collectionGroup: Group | undefined = await getGroupByCollectionId(_collectionId);
+                const groupService: IGroupService = new GroupsService();
+                const _collectionGroup: Group | undefined = await groupService.getGroupByCollectionId(_collectionId);
                 if (_collectionGroup) canManageCollection = isMyGroup(req.user, _collectionGroup.id);
             }
 

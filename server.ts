@@ -1,30 +1,16 @@
-﻿require('rootpath')(); // absolute paths is a requirement(spec)
-const express = require('express');
-const cors = require('cors');
-const helmet = require("helmet");
-import * as bodyParser from 'body-parser';
-import * as serverless from 'serverless-http';
+﻿import App from './app';
+import {UsersController} from "./users/users.controller";
+import {Service, UsersService} from "./users/users.service";
+import 'dotenv/config';
+import {validateEnv} from './_helpers/utils';
 
-import router from "./router";
-import {errorHandlerMiddleware} from "./_helpers/middlewares";
+validateEnv();
 
-const app = express();
+const UserService = new UsersService();
+const app = new App(
+    [
+        new UsersController(UserService),
+    ],
+);
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-app.use(cors());
-
-//api routes
-app.use(router);
-
-//security
-app.use(helmet());
-
-// global error handler
-app.use(errorHandlerMiddleware);
-
-// start server
-const port = process.env.NODE_ENV === 'production' ? 80 : 4000;
-const server = app.listen(port, function () {
-    console.log('Server listening on port ' + port);
-});
+app.listen();
