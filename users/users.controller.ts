@@ -1,32 +1,21 @@
 ﻿import {User, Role, Group, Collection, Item, UserRO} from "../_helpers/interfaces";
-import {NextFunction, Request, Response, Router} from "express";
+import {NextFunction, Request, Response} from "express";
 
-const express = require('express');
-const router: Router = Router();
 const userService = require('./users.service');
-
-import {authorizeMiddleware} from "../_helpers/middlewares";
 
 import {isManager, isGlobalManager, isMyGroup} from "../_helpers/utils";
 
 import { getGroupById} from "../groups/groups.service";
 
-// routes
-router.post('/authenticate', authenticate);     // public route
-router.get('/', authorizeMiddleware(['globalManager']), getAllUsers);
-router.get('/:id', authorizeMiddleware(), getUserById);       // all authenticated users
-router.post('/', authorizeMiddleware(['globalManager']), createUser);
-router.put('/:id', authorizeMiddleware(), updateUser);
-router.delete('/:id', authorizeMiddleware(['globalManager', 'manager']), deleteUser);
-export const userRoutes: Router = router;
 
-function authenticate(req: Request, res: Response, next: NextFunction) {
+
+export const authenticate = function (req: Request, res: Response, next: NextFunction) {
     userService.authenticate(req.body)
         .then((user: any) => user ? res.json(user) : res.status(400).json({ message: 'Username or password is incorrect' }))
         .catch((err: Error) => next(err));
 }
 
-function getAllUsers(req: any, res: Response, next: NextFunction) {
+export const getAllUsers = function (req: any, res: Response, next: NextFunction) {
     const currentUser = req.user;
     if (!isGlobalManager(currentUser)) {
         return res.status(401).json({ message: 'Unauthorized' });
@@ -37,7 +26,7 @@ function getAllUsers(req: any, res: Response, next: NextFunction) {
         .catch((err: Error) => next(err));
 }
 
-function getUserById(req: any, res: Response, next: NextFunction) {
+export const getUserById =  function (req: any, res: Response, next: NextFunction) {
     const currentUser = req.user;
     const id = parseInt(req.params.id);
 
@@ -49,7 +38,7 @@ function getUserById(req: any, res: Response, next: NextFunction) {
     }
 }
 
-async function createUser(req: any, res: Response, next: NextFunction) {
+export const createUser = async function (req: any, res: Response, next: NextFunction) {
     const currentUser = req.user;
     const newUser = req.body.user;
 
@@ -86,7 +75,7 @@ async function createUser(req: any, res: Response, next: NextFunction) {
 
 }
 
-function updateUser(req: any, res: Response, next: NextFunction) {
+export const updateUser = function (req: any, res: Response, next: NextFunction) {
     const currentUser = req.user;
     const newUserData = req.body.user;
     const id = parseInt(req.params.id);
@@ -102,7 +91,7 @@ function updateUser(req: any, res: Response, next: NextFunction) {
         .catch((err: Error) => next(err));
 }
 
-function deleteUser(req: any, res: Response, next: NextFunction) {
+export const deleteUser = function (req: any, res: Response, next: NextFunction) {
     const currentUser = req.user;
     const id = parseInt(req.params.id);
 

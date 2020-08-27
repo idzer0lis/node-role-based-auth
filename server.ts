@@ -1,27 +1,24 @@
 ﻿require('rootpath')(); // absolute paths is a requirement(spec)
 const express = require('express');
-//const express = require('serverless-express/express');
-const app = express();
 const cors = require('cors');
-const bodyParser = require('body-parser');
+const helmet = require("helmet");
+import * as bodyParser from 'body-parser';
+import * as serverless from 'serverless-http';
 
-import { userRoutes } from "./users/users.controller";
-import { groupRoutes } from "./groups/groups.controller";
-import {collectionRoutes} from "./collections/collections.controller";
-
+import router from "./router";
 import {errorHandlerMiddleware} from "./_helpers/middlewares";
 
-
-const serverless = require('serverless-http');
+const app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
 
 //api routes
-app.use('/users',  userRoutes);
-app.use('/groups', groupRoutes);
-app.use('/collections', collectionRoutes);
+app.use(router);
+
+//security
+app.use(helmet());
 
 // global error handler
 app.use(errorHandlerMiddleware);
@@ -31,7 +28,3 @@ const port = process.env.NODE_ENV === 'production' ? 80 : 4000;
 const server = app.listen(port, function () {
     console.log('Server listening on port ' + port);
 });
-
-module.exports.handler = serverless(app);
-
-//module.exports = app;

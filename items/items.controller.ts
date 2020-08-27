@@ -1,27 +1,12 @@
-﻿import {User, Role, Group, Collection, Item, UserRO} from "../_helpers/interfaces";
-import {NextFunction, Request, Response, Router} from "express";
-
-const express = require('express');
-const router: Router = Router();
+﻿import {Item} from "../_helpers/interfaces";
+import {NextFunction, Response} from "express";
 const itemService = require('../items/items.service');
-
-import {authorizeMiddleware} from "../_helpers/middlewares";
-
 import {isGlobalManager} from "../_helpers/utils";
 import {getCollectionById} from "../collections/collections.service";
 
-
-// routes
-router.get('/', authorizeMiddleware(['globalManager']), getAllItems);
-router.get('/:id', authorizeMiddleware(), getItemById);
-router.post('/', authorizeMiddleware(), createItem);
-router.put('/:id', authorizeMiddleware(), updateItem);
-router.delete('/:id', authorizeMiddleware(), deleteItem);
-export const itemRoutes: Router = router;
-
 // todo, refactor using the middlewares made
 
-function getAllItems(req: any, res: Response, next: NextFunction) {
+export const getAllItems = function (req: any, res: Response, next: NextFunction) {
     const currentUser = req.user;
     if (!isGlobalManager(currentUser)) {
         return res.status(401).json({ message: 'Unauthorized' });
@@ -32,7 +17,7 @@ function getAllItems(req: any, res: Response, next: NextFunction) {
         .catch((err: Error) => next(err));
 }
 
-function getItemById(req: any, res: Response, next: NextFunction) {
+export const getItemById  = function (req: any, res: Response, next: NextFunction) {
     const currentUser = req.user;
     const id = parseInt(req.params.id);
 
@@ -46,7 +31,7 @@ function getItemById(req: any, res: Response, next: NextFunction) {
     }
 }
 
-async function createItem(req: any, res: Response, next: NextFunction) {
+export const createItem = async function (req: any, res: Response, next: NextFunction) {
     const currentUser = req.user;
     const newItem = req.body.item;
     const collection = await getCollectionById(req.body.groupId);
@@ -64,11 +49,11 @@ async function createItem(req: any, res: Response, next: NextFunction) {
     }
 }
 
-function updateItem(req: any, res: Response, next: NextFunction) {
+export const updateItem = function (req: any, res: Response, next: NextFunction) {
     // todo
 }
 
-function deleteItem(req: any, res: Response, next: NextFunction) {
+export const deleteItem = function (req: any, res: Response, next: NextFunction) {
     const currentUser = req.user;
     const id = parseInt(req.params.id);
 
